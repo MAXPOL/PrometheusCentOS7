@@ -27,3 +27,27 @@ chown prometheus:prometheus /usr/local/bin/{prometheus,promtool}
 --storage.tsdb.path /var/lib/prometheus/
 --web.console.templates=/etc/prometheus/consoles
 --web.console.libraries=/etc/prometheus/console_libraries
+
+echo "[Unit]" >> /etc/systemd/system/prometheus.service
+echo "Description=Prometheus Service" >> /etc/systemd/system/prometheus.service
+echo "After=network.target" >> /etc/systemd/system/prometheus.service
+echo "[Service]" >> /etc/systemd/system/prometheus.service
+echo "User=prometheus" >> /etc/systemd/system/prometheus.service
+echo "Group=prometheus" >> /etc/systemd/system/prometheus.service
+echo "Type=simple" >> /etc/systemd/system/prometheus.service
+echo "ExecStart=/usr/local/bin/prometheus \" >> /etc/systemd/system/prometheus.service
+echo "--config.file /etc/prometheus/prometheus.yml \" >> /etc/systemd/system/prometheus.service
+echo "--storage.tsdb.path /var/lib/prometheus/ \" >> /etc/systemd/system/prometheus.service
+echo "--web.console.templates=/etc/prometheus/consoles \" >> /etc/systemd/system/prometheus.service
+echo "--web.console.libraries=/etc/prometheus/console_libraries" >> /etc/systemd/system/prometheus.service
+echo "ExecReload=/bin/kill -HUP $MAINPID" >> /etc/systemd/system/prometheus.service
+echo "Restart=on-failure" >> /etc/systemd/system/prometheus.service
+echo "[Install]" >> /etc/systemd/system/prometheus.service
+echo "WantedBy=multi-user.target" >> /etc/systemd/system/prometheus.service
+
+systemctl daemon-reload
+systemctl enable prometheus
+chown -R prometheus:prometheus /var/lib/prometheus
+systemctl start prometheus
+systemctl status prometheus
+
