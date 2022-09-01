@@ -22,12 +22,6 @@ useradd --no-create-home --shell /bin/false prometheus
 chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 chown prometheus:prometheus /usr/local/bin/{prometheus,promtool}
 
-/usr/local/bin/prometheus
---config.file /etc/prometheus/prometheus.yml
---storage.tsdb.path /var/lib/prometheus/
---web.console.templates=/etc/prometheus/consoles
---web.console.libraries=/etc/prometheus/console_libraries
-
 echo "[Unit]" >> /etc/systemd/system/prometheus.service
 echo "Description=Prometheus Service" >> /etc/systemd/system/prometheus.service
 echo "After=network.target" >> /etc/systemd/system/prometheus.service
@@ -48,6 +42,13 @@ echo "WantedBy=multi-user.target" >> /etc/systemd/system/prometheus.service
 systemctl daemon-reload
 systemctl enable prometheus
 chown -R prometheus:prometheus /var/lib/prometheus
+
+/usr/local/bin/prometheus
+--config.file /etc/prometheus/prometheus.yml
+--storage.tsdb.path /var/lib/prometheus/
+--web.console.templates=/etc/prometheus/consoles
+--web.console.libraries=/etc/prometheus/console_libraries
+
 systemctl start prometheus
 systemctl status prometheus
 
